@@ -64,11 +64,30 @@ How to Run the Project
 
 Project Structure
 -----------------
-- src/main/java: Contains all Java source code (Controllers, Services, Repositories, Entities).
-- src/main/resources/templates: Thymeleaf HTML templates for the UI.
-- src/main/resources/static: Static assets like CSS, JS, and client-side scripts.
-- src/main/resources/application.properties: Main configuration file.
-- uploads/: Directory where uploaded service images are stored.
+```text
+eventsbooking/
+├── .mvn/                       # Maven wrapper configuration
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/eventsbooking/eventsbooking/
+│   │   │       ├── config/      # Configuration classes (e.g., WebConfig)
+│   │   │       ├── controller/  # MVC Controllers (User, Admin, Provider)
+│   │   │       ├── dto/         # Data Transfer Objects
+│   │   │       ├── model/       # Entity classes (User, Booking, Service)
+│   │   │       ├── repository/  # Spring Data JPA Repositories
+│   │   │       └── service/     # Business logic interfaces & implementations
+│   │   └── resources/
+│   │       ├── static/         # CSS and Client-side JS
+│   │       │   ├── script/
+│   │       │   └── styles/
+│   │       ├── templates/      # Thymeleaf HTML templates
+│   │       └── application.properties # Main application configuration
+│   └── test/                   # Unit and integration tests
+├── uploads/                    # Directory for service image uploads
+├── pom.xml                     # Maven project configuration
+└── readme.txt                  # Project documentation
+```
 
 Troubleshooting
 ---------------
