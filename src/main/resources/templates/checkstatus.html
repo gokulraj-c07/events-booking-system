@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Check Status - EventHub Provider</title>
+	<meta name="description" content="Manage your event services and grow your business">
+
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://resource.trickle.so/vendor_lib/unpkg/lucide-static@0.516.0/font/lucide.css" rel="stylesheet">
+	<link href="/styles/main.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased">
+	<div id="app" class="min-h-screen flex flex-col">
+		<!-- Header -->
+		<header class="glass-header sticky top-0 z-50 transition-all duration-300" id="header">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex items-center justify-between h-16">
+					<div class="flex items-center space-x-3">
+						<div
+							class="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary-color)] to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+							<a th:href="@{/providerdashboard}" class="icon-briefcase text-xl text-white"></a>
+						</div>
+						<a th:href="@{/providerdashboard}"
+							class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">EventHub
+							<span class="text-sm font-medium text-gray-500 ml-1">Provider</span></a>
+					</div>
+					<!-- Desktop nav bar -->
+					<nav class="hidden md:flex items-center space-x-8">
+						<a th:href="@{/providerdashboard/addservices}"
+							class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">
+							Manage Services
+						</a>
+						<a th:href="@{/providerdashboard/checkstatus}"
+							class="text-[var(--primary-color)] font-semibold transition-colors duration-200 text-sm tracking-wide">
+							Bookings
+						</a>
+						<a th:href="@{/providerdashboard/bills}"
+							class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">
+							Billing
+						</a>
+						<!-- AFTER LOGIN (Desktop) -->
+						<div class="relative" th:if="${session.userName != null}">
+							<button id="userMenuButtonDesktop"
+								class="flex items-center space-x-2 text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors focus:outline-none group">
+								<div
+									class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+									<span th:text="${#strings.substring(session.userName,0,1)}"
+										class="font-bold"></span>
+								</div>
+								<span th:text="${session.userName}"></span>
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M19 9l-7 7-7-7" />
+								</svg>
+							</button>
+							<div id="userDropdownDesktop"
+								class="hidden absolute right-0 mt-4 w-60 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden ring-1 ring-black ring-opacity-5">
+								<div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+									<p class="text-sm font-medium text-gray-900">Signed in as</p>
+									<p class="text-sm text-gray-500 truncate" th:text="${session.userName}">Provider</p>
+								</div>
+								<a th:href="@{/userdashboard}"
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Switch
+									to User View</a>
+								<a th:href="@{/logout}"
+									class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Logout</a>
+							</div>
+						</div>
+					</nav>
+					<button class="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors" id="mobile-menu-btn">
+						<div class="icon-menu text-2xl text-gray-600"></div>
+					</button>
+				</div>
+				<!-- Mobile nav bar -->
+				<div class="md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 hidden absolute left-0 right-0 shadow-lg"
+					id="mobile-menu">
+					<nav class="px-4 py-4 space-y-3">
+						<a th:href="@{/providerdashboard/addservices}"
+							class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Manage
+							Services</a>
+						<a th:href="@{/providerdashboard/checkstatus}"
+							class="block text-[var(--primary-color)] font-medium">Bookings</a>
+						<a th:href="@{/providerdashboard/bills}"
+							class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Billing</a>
+						<div class="border-t border-gray-100 pt-3" th:if="${session.userName != null}">
+							<div class="flex items-center space-x-3 px-2 py-2">
+								<div
+									class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+									<span th:text="${#strings.substring(session.userName,0,1)}"
+										class="font-bold"></span>
+								</div>
+								<div>
+									<p class="font-medium text-gray-900" th:text="${session.userName}"></p>
+								</div>
+							</div>
+							<a th:href="@{/userdashboard}"
+								class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Switch to User
+								View</a>
+							<a th:href="@{/logout}"
+								class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md">Logout</a>
+						</div>
+					</nav>
+				</div>
+			</div>
+		</header>
+
+		<div class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+			<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+				<!-- Sidebar (Consistent with Add Services) -->
+				<aside class="md:col-span-1">
+					<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+						<h3 class="text-lg font-bold mb-6 text-gray-800 flex items-center gap-2">
+							<span class="w-1 h-6 bg-[var(--primary-color)] rounded-full"></span>
+							Dashboard Menu
+						</h3>
+						<nav class="space-y-2">
+							<a th:href="@{/providerdashboard/addservices}"
+								class="flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all text-gray-600 hover:bg-gray-50 hover:text-indigo-600 group">
+								<div class="icon-layers text-xl"></div>
+								<span class="font-medium">Manage Services</span>
+							</a>
+							<a th:href="@{/providerdashboard/checkstatus}"
+								class="flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all bg-indigo-50 text-indigo-600 font-semibold group shadow-sm ring-1 ring-indigo-100">
+								<div class="icon-calendar-check text-xl"></div>
+								<span class="font-medium">Booking Status</span>
+							</a>
+							<a th:href="@{/providerdashboard/bills}"
+								class="flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all text-gray-600 hover:bg-gray-50 hover:text-indigo-600 group">
+								<div class="icon-receipt text-xl"></div>
+								<span class="font-medium">Bills & Invoices</span>
+							</a>
+						</nav>
+					</div>
+				</aside>
+
+				<!-- Main Content -->
+				<main class="md:col-span-3">
+					<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+						<!-- Top bar -->
+						<div
+							class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8 border-b border-gray-100 pb-6">
+							<div>
+								<h2 class="text-2xl font-bold text-gray-900">Booking Management</h2>
+								<p class="text-gray-500 text-sm mt-1">Track and manage your service requests</p>
+							</div>
+							<!-- Filter -->
+							<form method="get"
+								class="flex items-center gap-3 bg-gray-50 p-2 rounded-xl border border-gray-200">
+								<div class="px-3 text-gray-500">
+									<div class="icon-filter text-lg"></div>
+								</div>
+								<select name="category" onchange="this.form.submit()"
+									class="bg-transparent border-none text-sm font-medium text-gray-700 focus:ring-0 cursor-pointer text-right">
+									<option th:each="cat : ${categories}" th:value="${cat}"
+										th:selected="${cat == selectedCategory}" th:text="${cat}">
+									</option>
+								</select>
+							</form>
+						</div>
+
+						<!-- Tabs -->
+						<div class="flex gap-2 mb-6 bg-gray-50 p-1.5 rounded-xl inline-flex">
+							<button id="tab-current"
+								class="px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-indigo-600 ring-1 ring-black/5">
+								Current Bookings
+							</button>
+							<button id="tab-past"
+								class="px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-700 transition-all">
+								Past Bookings
+							</button>
+						</div>
+
+						<!-- CURRENT BOOKINGS -->
+						<div id="current-section" class="mt-4 animate-fade-in">
+							<!-- Empty -->
+							<div th:if="${#lists.isEmpty(currentBookings)}"
+								class="py-16 text-center text-gray-500 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+								<div
+									class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+									<div class="icon-calendar-x text-3xl text-gray-400"></div>
+								</div>
+								<h3 class="text-lg font-medium text-gray-900">No current bookings</h3>
+								<p class="text-sm">Wait for customers to book your services!</p>
+							</div>
+							<!-- List -->
+							<div th:if="${!#lists.isEmpty(currentBookings)}" class="space-y-4">
+								<div th:each="b : ${currentBookings}"
+									class="flex flex-col sm:flex-row items-start sm:items-center justify-between border border-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 bg-white group">
+									<div class="mb-4 sm:mb-0">
+										<div class="flex items-center gap-3 mb-1">
+											<h4 class="text-lg font-bold text-gray-900" th:text="${b.serviceName}"></h4>
+											<span
+												class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200"
+												th:text="${b.category}"></span>
+										</div>
+										<div class="flex flex-col gap-1 text-sm text-gray-500">
+											<div class="flex items-center gap-2">
+												<div class="icon-user text-xs"></div>
+												<span th:text="${b.customerName}"></span>
+											</div>
+											<div class="flex items-center gap-2">
+												<div class="icon-calendar text-xs"></div>
+												<span th:text="${b.date}"></span>
+											</div>
+										</div>
+									</div>
+									<div class="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
+										<div class="flex items-center gap-2">
+											<span class="px-3 py-1 rounded-full text-xs font-semibold border"
+												th:classappend="${b.paymentStatus == 'Paid' ? 'bg-green-50 text-green-700 border-green-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}"
+												th:text="${b.paymentStatus}">
+											</span>
+											<span
+												class="px-3 py-1 rounded-full text-xs font-semibold border border-blue-100 bg-blue-50 text-blue-700"
+												th:text="${b.status}"></span>
+										</div>
+										<div class="flex gap-2 w-full sm:w-auto">
+											<button
+												class="flex-1 sm:flex-none px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors provider-view-btn"
+												th:data-id="${b.bookingId}">
+												View
+											</button>
+											<th:block th:if="${b.status == 'Pending'}">
+												<button
+													class="flex-1 sm:flex-none px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg text-sm font-medium transition-colors shadow-sm provider-action-btn"
+													th:data-id="${b.bookingId}" data-action="accept">
+													Accept
+												</button>
+												<button
+													class="flex-1 sm:flex-none px-4 py-2 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-sm font-medium transition-colors provider-action-btn"
+													th:data-id="${b.bookingId}" data-action="reject">
+													Reject
+												</button>
+											</th:block>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- PAST BOOKINGS -->
+						<div id="past-section" class="hidden mt-4 animate-fade-in">
+							<!-- Empty -->
+							<div th:if="${#lists.isEmpty(pastBookings)}"
+								class="py-16 text-center text-gray-500 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+								<div
+									class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+									<div class="icon-history text-3xl text-gray-400"></div>
+								</div>
+								<h3 class="text-lg font-medium text-gray-900">No past bookings</h3>
+							</div>
+							<!-- List -->
+							<div th:if="${!#lists.isEmpty(pastBookings)}" class="space-y-4">
+								<div th:each="b : ${pastBookings}"
+									class="flex flex-col sm:flex-row items-center justify-between border border-gray-100 rounded-2xl p-6 hover:bg-gray-50 transition-colors">
+									<div class="mb-4 sm:mb-0 w-full sm:w-auto">
+										<div class="flex items-center gap-3 mb-1">
+											<h4 class="text-lg font-bold text-gray-700" th:text="${b.serviceName}"></h4>
+											<span
+												class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200"
+												th:text="${b.category}"></span>
+										</div>
+										<div class="flex flex-col gap-1 text-sm text-gray-500">
+											<div class="flex items-center gap-2">
+												<div class="icon-user text-xs"></div>
+												<span th:text="${b.customerName}"></span>
+											</div>
+											<div class="flex items-center gap-2">
+												<div class="icon-calendar text-xs"></div>
+												<span th:text="${b.date}"></span>
+											</div>
+										</div>
+									</div>
+									<div class="flex items-center gap-4 w-full sm:w-auto justify-end">
+										<div th:if="${b.hasFeedback}"
+											class="flex items-center gap-1 text-green-600 text-sm font-medium bg-green-50 px-3 py-1 rounded-full border border-green-100">
+											<div class="icon-star text-xs"></div> Feedback
+										</div>
+										<button
+											class="px-4 py-2 border border-gray-200 text-gray-600 hover:bg-white hover:text-indigo-600 hover:border-indigo-200 rounded-lg text-sm font-medium transition-colors provider-view-btn"
+											th:data-id="${b.bookingId}">
+											View Details
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+
+		<!-- PROVIDER BOOKING MODAL -->
+		<div id="providerBookingModal"
+			class="fixed inset-0 hidden flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+			<div
+				class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 relative transform scale-100 transition-transform m-4">
+				<div class="flex justify-between items-center mb-6">
+					<h3 class="text-xl font-bold text-gray-900">Booking Details</h3>
+					<button id="closeProviderModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+						<div class="icon-x text-2xl"></div>
+					</button>
+				</div>
+
+				<div class="space-y-4 text-sm">
+					<div class="grid grid-cols-2 gap-4">
+						<div class="p-4 bg-gray-50 rounded-xl">
+							<span
+								class="block text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Service</span>
+							<span id="pService" class="text-base font-bold text-gray-900"></span>
+							<span id="pCategory" class="block text-xs text-gray-500 mt-1"></span>
+						</div>
+						<div class="p-4 bg-gray-50 rounded-xl">
+							<span
+								class="block text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">Customer</span>
+							<span id="pCustomer" class="text-base font-bold text-gray-900"></span>
+							<div class="flex flex-col mt-1 gap-0.5">
+								<span id="pPhone" class="text-xs text-gray-500"></span>
+								<span id="pEmail" class="text-xs text-gray-500 truncate"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="border-t border-gray-100 my-4 pt-4 space-y-3">
+						<div class="flex justify-between items-center">
+							<span class="text-gray-500">Location</span>
+							<span id="pLocation" class="font-medium text-gray-900 text-right"></span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-gray-500">Date</span>
+							<span id="pDate" class="font-medium text-gray-900"></span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-gray-500">Total Price</span>
+							<span id="pPrice" class="font-bold text-gray-900"></span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-gray-500">Advance Paid</span>
+							<span id="pAdvance" class="font-medium text-gray-900"></span>
+						</div>
+						<div class="flex justify-between items-center pt-2">
+							<span class="text-gray-500">Status</span>
+							<div class="flex gap-2">
+								<span id="pStatus"
+									class="px-2 py-1 rounded bg-blue-50 text-blue-700 text-xs font-bold"></span>
+								<span id="pPayment"
+									class="px-2 py-1 rounded bg-green-50 text-green-700 text-xs font-bold"></span>
+							</div>
+						</div>
+					</div>
+
+					<div id="pFeedbackWrap" class="mt-4 p-4 bg-yellow-50 rounded-xl border border-yellow-100 hidden">
+						<div class="flex items-center gap-2 mb-2">
+							<span class="text-xs font-bold text-yellow-800 uppercase tracking-wide">Feedback</span>
+							<div id="pRating" class="text-yellow-600 font-bold"></div>
+						</div>
+						<div id="pComment" class="text-sm text-gray-700 italic"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				// TABS
+				const tabCurrent = document.getElementById('tab-current');
+				const tabPast = document.getElementById('tab-past');
+				const sectionCurrent = document.getElementById('current-section');
+				const sectionPast = document.getElementById('past-section');
+
+				if (tabCurrent && tabPast) {
+					tabCurrent.addEventListener('click', () => {
+						tabCurrent.className = 'px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-indigo-600 ring-1 ring-black/5';
+						tabPast.className = 'px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-700 transition-all';
+						sectionCurrent.classList.remove('hidden');
+						sectionPast.classList.add('hidden');
+					});
+
+					tabPast.addEventListener('click', () => {
+						tabPast.className = 'px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm bg-white text-indigo-600 ring-1 ring-black/5';
+						tabCurrent.className = 'px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-700 transition-all';
+						sectionPast.classList.remove('hidden');
+						sectionCurrent.classList.add('hidden');
+					});
+				}
+
+				// MODAL Logic (Kept mostly same, just class changes handled in HTML)
+				const modal = document.getElementById('providerBookingModal');
+				const closeBtn = document.getElementById('closeProviderModal');
+
+				document.querySelectorAll('.provider-view-btn').forEach(btn => {
+					btn.addEventListener('click', function () {
+						const id = this.getAttribute('data-id');
+						// Mock logic or actual fetch
+						fetch(`/providerdashboard/booking-details/${id}`)
+							.then(res => res.json())
+							.then(data => {
+								document.getElementById('pService').textContent = data.serviceName;
+								document.getElementById('pCategory').textContent = data.category;
+								document.getElementById('pLocation').textContent = data.location;
+								document.getElementById('pCustomer').textContent = data.customerName;
+								document.getElementById('pEmail').textContent = data.customerEmail;
+								document.getElementById('pPhone').textContent = data.customerPhone;
+								document.getElementById('pDate').textContent = data.bookingDate;
+								document.getElementById('pPrice').textContent = data.price;
+								document.getElementById('pAdvance').textContent = data.advanceAmount || 'N/A';
+								document.getElementById('pStatus').textContent = data.status;
+								document.getElementById('pPayment').textContent = data.paymentStatus;
+
+								const fbWrap = document.getElementById('pFeedbackWrap');
+								if (data.rating) {
+									fbWrap.classList.remove('hidden');
+									document.getElementById('pRating').textContent = '★'.repeat(data.rating);
+									document.getElementById('pComment').textContent = data.feedbackComment;
+								} else {
+									fbWrap.classList.add('hidden');
+								}
+
+								modal.classList.remove('hidden');
+								modal.classList.add('flex');
+							})
+							.catch(err => console.error(err));
+					});
+				});
+
+				closeBtn.addEventListener('click', () => {
+					modal.classList.add('hidden');
+					modal.classList.remove('flex');
+				});
+
+				modal.addEventListener('click', (e) => {
+					if (e.target === modal) {
+						modal.classList.add('hidden');
+						modal.classList.remove('flex');
+					}
+				});
+
+				// ACTIONS
+				document.querySelectorAll('.provider-action-btn').forEach(btn => {
+					btn.addEventListener('click', function () {
+						const id = this.getAttribute('data-id');
+						const action = this.getAttribute('data-action');
+						if (!confirm(`Are you sure you want to ${action} this booking?`)) return;
+						fetch(`/providerdashboard/booking/${id}/action?action=${action}`, { method: 'POST' })
+							.then(res => {
+								if (res.ok) location.reload();
+								else alert('Action failed');
+							});
+					});
+				});
+			});
+		</script>
+
+		<!-- Footer -->
+		<footer class="bg-gray-900 text-white mt-auto">
+			<div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+					<div class="space-y-4">
+						<div class="flex items-center space-x-3">
+							<div
+								class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+								<a href="index.html" class="icon-calendar text-xl text-white"></a>
+							</div>
+							<a href="index.html" class="text-2xl font-bold tracking-tight">EventHub</a>
+						</div>
+						<p class="text-gray-400 text-sm leading-relaxed">
+							Your trusted partner for discovering and booking exceptional events, venues, and vendors. We
+							make event planning seamless.
+						</p>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Provider Tools</h4>
+						<ul class="space-y-3 text-sm text-gray-400">
+							<li><a href="#" class="hover:text-white transition-colors">Add Service</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Check Status</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Billing</a></li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Support</h4>
+						<ul class="space-y-3 text-sm text-gray-400">
+							<li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Connect</h4>
+						<div class="flex space-x-4">
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all duration-300">
+								<div class="icon-facebook text-lg"></div>
+							</a>
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all duration-300">
+								<div class="icon-twitter text-lg"></div>
+							</a>
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all duration-300">
+								<div class="icon-instagram text-lg"></div>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
+					<p>&copy; 2025 EventHub. All rights reserved.</p>
+				</div>
+			</div>
+		</footer>
+	</div>
+	<script src="/script/app.js"></script>
+</body>
+
+</html>

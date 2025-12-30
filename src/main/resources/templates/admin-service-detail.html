@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Service Details - Admin</title>
+    <th:block th:replace="~{admin-layout :: head}"></th:block>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <aside th:replace="~{admin-layout :: sidebar}"></aside>
+
+        <div class="flex-1 flex flex-col min-w-0">
+            <header th:replace="~{admin-layout :: topbar}"></header>
+
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div class="mb-10 flex items-center justify-between">
+                    <div>
+                        <a href="/admin/services"
+                            class="text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-indigo-600 transition-colors flex items-center gap-2 mb-2">
+                            <div class="icon-arrow-left"></div> Back to Services
+                        </a>
+                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Service Details</h1>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Preview Card -->
+                    <div class="lg:col-span-1 space-y-8">
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden text-center">
+                            <div class="aspect-video w-full bg-gray-100 relative overflow-hidden">
+                                <img th:if="${service.imageUrl}" th:src="${service.imageUrl}"
+                                    class="w-full h-full object-cover" alt="Service Image">
+                                <div th:unless="${service.imageUrl}"
+                                    class="w-full h-full flex items-center justify-center text-gray-300">
+                                    <div class="icon-image text-4xl"></div>
+                                </div>
+                            </div>
+                            <div class="p-8">
+                                <h2 class="text-2xl font-black text-gray-900" th:text="${service.serviceName}">Service
+                                    Name</h2>
+                                <p class="text-sm font-bold text-indigo-600 mt-1 uppercase tracking-widest"
+                                    th:text="${service.serviceCategory}">Category</p>
+                                <div class="mt-4 flex flex-wrap justify-center gap-2">
+                                    <span
+                                        class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-100"
+                                        th:text="${service.status}">STATUS</span>
+                                    <span th:if="${service.available}"
+                                        class="px-4 py-1.5 bg-green-50 text-green-600 rounded-full text-xs font-bold uppercase tracking-widest border border-green-100">AVAILABLE</span>
+                                    <span th:unless="${service.available}"
+                                        class="px-4 py-1.5 bg-red-50 text-red-600 rounded-full text-xs font-bold uppercase tracking-widest border border-red-100">UNAVAILABLE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+                            <h3
+                                class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-50 pb-4">
+                                Financials</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-500">Base Price</span>
+                                    <span class="text-lg font-black text-gray-900"
+                                        th:text="'₹' + ${service.price}">₹0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-500">Advance</span>
+                                    <span class="text-sm font-bold text-gray-700"
+                                        th:text="'₹' + ${service.advanceAmount}">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Info -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden mb-8">
+                            <div class="p-8 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+                                <h2 class="text-lg font-bold text-gray-900">Database Record</h2>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono"
+                                    th:text="'#SER-' + ${service.serviceId}"></span>
+                            </div>
+                            <div class="p-8">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                                    <div class="space-y-1">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Business
+                                            Email</label>
+                                        <p class="text-sm font-bold text-gray-900" th:text="${service.businessEmailId}">
+                                            Email</p>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Business
+                                            Phone</label>
+                                        <p class="text-sm font-bold text-gray-900"
+                                            th:text="${service.businessPhoneNumber}">Phone</p>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</label>
+                                        <p class="text-sm font-bold text-gray-900" th:text="${service.location}">
+                                            Location</p>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Provider</label>
+                                        <p class="text-sm font-bold text-indigo-600" th:text="${service.provider.name}">
+                                            Name</p>
+                                    </div>
+                                    <div class="space-y-1 md:col-span-2">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Full
+                                            Address</label>
+                                        <p class="text-sm font-medium text-gray-700" th:text="${service.address}">
+                                            Address</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+                            <h3
+                                class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-50 pb-4">
+                                Service Description</h3>
+                            <div class="prose prose-sm max-w-none text-gray-600" th:utext="${service.description}">
+                                Description goes here...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <th:block th:insert="~{admin-layout :: scripts}"></th:block>
+</body>
+
+</html>

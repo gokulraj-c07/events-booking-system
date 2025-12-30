@@ -1,0 +1,49 @@
+@charset "UTF-8";
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    width: 240px;
+    background: #1f2937;
+    color: #fff;
+    padding: 20px;
+}
+.sidebar .logo {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+.sidebar nav a {
+    display: block;
+    padding: 10px;
+    color: #ddd;
+    text-decoration: none;
+    margin-bottom: 5px;
+    border-radius: 4px;
+}
+.sidebar nav a:hover, .sidebar nav a.active {
+    background: #4b5563;
+    color: #fff;
+}
+.sidebar nav a.logout {
+    margin-top: 20px;
+    background: #ef4444;
+    text-align: center;
+}
+.content {
+    flex: 1;
+    padding: 30px;
+}
+.stats {
+    display: flex;
+    gap: 20px;
+}
+.card {
+    background: #f3f4f6;
+    padding: 20px;
+    border-radius: 8px;
+}

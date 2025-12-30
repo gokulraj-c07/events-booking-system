@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Invoice Management - Admin</title>
+    <th:block th:replace="~{admin-layout :: head}"></th:block>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <aside th:replace="~{admin-layout :: sidebar}"></aside>
+
+        <div class="flex-1 flex flex-col min-w-0">
+            <header th:replace="~{admin-layout :: topbar}"></header>
+
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div class="mb-10">
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">System Invoices</h1>
+                    <p class="text-gray-500 mt-1">Manage and track all generated bills and tax records.</p>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-50 flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-900">All Generated Bills</h2>
+                        <div class="flex items-center gap-2 text-xs font-bold text-gray-400">
+                            Showing latest <span class="text-gray-900" th:text="${bills.size()}">0</span> records
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        ID</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Invoice Number</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
+                                        Booking ID</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
+                                        Date</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
+                                        Status</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        Amount</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        View</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                <tr th:each="b : ${bills}" class="hover:bg-gray-50/50 transition-colors">
+                                    <td class="px-6 py-4 text-xs font-bold text-gray-400" th:text="${b.id}"></td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="icon-file-text text-indigo-500 text-sm"></div>
+                                            <span class="text-sm font-bold text-gray-900"
+                                                th:text="${b.invoiceNumber}">INV-001</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span
+                                            class="px-2 py-1 bg-gray-50 rounded text-[10px] font-bold text-gray-500 tracking-wider"
+                                            th:text="'#' + ${b.booking.bookingId}">0</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center text-xs text-gray-500 font-medium"
+                                        th:text="${b.date}">Date</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div th:switch="${b.status}">
+                                            <span th:case="'PAID'"
+                                                class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-green-100">Paid</span>
+                                            <span th:case="'UNPAID'"
+                                                class="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-amber-100">Unpaid</span>
+                                            <span th:case="*"
+                                                class="px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-100"
+                                                th:text="${b.status}">Status</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="text-sm font-extrabold text-gray-900"
+                                            th:text="'₹' + ${b.amount}">Amount</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a th:href="@{'/admin/bill/' + ${b.id} + '/view'}"
+                                            class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+                                            Details <div class="icon-external-link text-xs"></div>
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-gray-400 hover:text-red-500 transition-colors">
+                                            <div class="icon-trash-2 text-lg"></div>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <th:block th:insert="~{admin-layout :: scripts}"></th:block>
+</body>
+
+</html>

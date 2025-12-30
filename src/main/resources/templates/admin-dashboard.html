@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Dashboard - Admin</title>
+    <th:block th:replace="~{admin-layout :: head}"></th:block>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside th:replace="~{admin-layout :: sidebar}"></aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Bar -->
+            <header th:replace="~{admin-layout :: topbar}"></header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div class="mb-10">
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Overview</h1>
+                    <p class="text-gray-500 mt-1">Quick summary of EventHub's performance and activity.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Users Card -->
+                    <a th:href="@{/admin/users}"
+                        class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                <div class="icon-users text-2xl"></div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total
+                                    Users</p>
+                                <p class="text-3xl font-extrabold text-gray-900" th:text="${userCount}">0</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-bold text-blue-600">
+                            Manage Accounts <div class="icon-arrow-right text-xs"></div>
+                        </div>
+                    </a>
+
+                    <!-- Services Card -->
+                    <a th:href="@{/admin/services}"
+                        class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
+                                <div class="icon-layers text-2xl"></div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">All
+                                    Services</p>
+                                <p class="text-3xl font-extrabold text-gray-900" th:text="${serviceCount}">0</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-bold text-green-600">
+                            Browse Catalog <div class="icon-arrow-right text-xs"></div>
+                        </div>
+                    </a>
+
+                    <!-- Bookings Card -->
+                    <a th:href="@{/admin/booking}"
+                        class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all">
+                                <div class="icon-calendar-check text-2xl"></div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Bookings
+                                </p>
+                                <p class="text-3xl font-extrabold text-gray-900" th:text="${bookingCount}">0</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-bold text-purple-600">
+                            Track Schedule <div class="icon-arrow-right text-xs"></div>
+                        </div>
+                    </a>
+
+                    <!-- Payments Card -->
+                    <a th:href="@{/admin/payments}"
+                        class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-all">
+                                <div class="icon-banknote text-2xl"></div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Revenue
+                                </p>
+                                <p class="text-3xl font-extrabold text-gray-900" th:text="${paymentCount}">0</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-bold text-orange-600">
+                            Finance Overview <div class="icon-arrow-right text-xs"></div>
+                        </div>
+                    </a>
+
+                    <!-- Feedback Card -->
+                    <a th:href="@{/admin/feedback}"
+                        class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                <div class="icon-star text-2xl"></div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Reviews
+                                </p>
+                                <p class="text-3xl font-extrabold text-gray-900" th:text="${feedbackCount}">0</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-bold text-indigo-600">
+                            User Feedback <div class="icon-arrow-right text-xs"></div>
+                        </div>
+                    </a>
+
+                    <!-- Pending Approvals Card -->
+                    <a th:href="@{/admin/pending-services}"
+                        class="bg-indigo-600 p-8 rounded-3xl shadow-xl shadow-indigo-100 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                        <div class="flex items-center justify-between mb-6 relative z-10">
+                            <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center text-white">
+                                <div class="icon-shield-check text-2xl"></div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-indigo-100 uppercase tracking-widest mb-1">Pending
+                                    Approvals</p>
+                                <p class="text-3xl font-extrabold text-white"
+                                    th:text="${pendingCount != null ? pendingCount : 0}">0</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-bold text-white relative z-10">
+                            Review Waitlist <div class="icon-arrow-right text-xs"></div>
+                        </div>
+                    </a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <th:block th:insert="~{admin-layout :: scripts}"></th:block>
+</body>
+
+</html>

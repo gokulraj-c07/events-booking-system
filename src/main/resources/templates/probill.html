@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Provider Bills - EventHub</title>
+	<meta name="description" content="View and manage your service bills">
+
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://resource.trickle.so/vendor_lib/unpkg/lucide-static@0.516.0/font/lucide.css" rel="stylesheet">
+	<link href="/styles/main.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased">
+	<div id="app" class="min-h-screen flex flex-col">
+		<!-- Header -->
+		<header class="glass-header sticky top-0 z-50 transition-all duration-300" id="header">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex items-center justify-between h-16">
+					<div class="flex items-center space-x-3">
+						<div
+							class="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary-color)] to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+							<a th:href="@{/providerdashboard}" class="icon-briefcase text-xl text-white"></a>
+						</div>
+						<a th:href="@{/providerdashboard}"
+							class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">EventHub
+							<span class="text-sm font-medium text-gray-500 ml-1">Provider</span></a>
+					</div>
+					<!-- Desktop nav bar -->
+					<nav class="hidden md:flex items-center space-x-8">
+						<a th:href="@{/providerdashboard/addservices}"
+							class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">
+							Manage Services
+						</a>
+						<a th:href="@{/providerdashboard/checkstatus}"
+							class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">
+							Bookings
+						</a>
+						<a th:href="@{/providerdashboard/bills}"
+							class="text-[var(--primary-color)] font-semibold transition-colors duration-200 text-sm tracking-wide">
+							Billing
+						</a>
+						<!-- AFTER LOGIN (Desktop) -->
+						<div class="relative" th:if="${session.userName != null}">
+							<button id="userMenuButtonDesktop"
+								class="flex items-center space-x-2 text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors focus:outline-none group">
+								<div
+									class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+									<span th:text="${#strings.substring(session.userName,0,1)}"
+										class="font-bold"></span>
+								</div>
+								<span th:text="${session.userName}"></span>
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M19 9l-7 7-7-7" />
+								</svg>
+							</button>
+							<div id="userDropdownDesktop"
+								class="hidden absolute right-0 mt-4 w-60 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden ring-1 ring-black ring-opacity-5">
+								<div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+									<p class="text-sm font-medium text-gray-900">Signed in as</p>
+									<p class="text-sm text-gray-500 truncate" th:text="${session.userName}">Provider</p>
+								</div>
+								<a th:href="@{/userdashboard}"
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Switch
+									to User View</a>
+								<a th:href="@{/logout}"
+									class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Logout</a>
+							</div>
+						</div>
+					</nav>
+					<button class="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors" id="mobile-menu-btn">
+						<div class="icon-menu text-2xl text-gray-600"></div>
+					</button>
+				</div>
+				<!-- Mobile nav bar -->
+				<div class="md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 hidden absolute left-0 right-0 shadow-lg"
+					id="mobile-menu">
+					<nav class="px-4 py-4 space-y-3">
+						<a th:href="@{/providerdashboard/addservices}"
+							class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Manage
+							Services</a>
+						<a th:href="@{/providerdashboard/checkstatus}"
+							class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Bookings</a>
+						<a th:href="@{/providerdashboard/bills}"
+							class="block text-[var(--primary-color)] font-medium">Billing</a>
+						<div class="border-t border-gray-100 pt-3" th:if="${session.userName != null}">
+							<div class="flex items-center space-x-3 px-2 py-2">
+								<div
+									class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+									<span th:text="${#strings.substring(session.userName,0,1)}"
+										class="font-bold"></span>
+								</div>
+								<div>
+									<p class="font-medium text-gray-900" th:text="${session.userName}"></p>
+								</div>
+							</div>
+							<a th:href="@{/userdashboard}"
+								class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Switch to User
+								View</a>
+							<a th:href="@{/logout}"
+								class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md">Logout</a>
+						</div>
+					</nav>
+				</div>
+			</div>
+		</header>
+
+		<div class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+			<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+				<!-- Sidebar (Consistent) -->
+				<aside class="md:col-span-1">
+					<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+						<h3 class="text-lg font-bold mb-6 text-gray-800 flex items-center gap-2">
+							<span class="w-1 h-6 bg-[var(--primary-color)] rounded-full"></span>
+							Dashboard Menu
+						</h3>
+						<nav class="space-y-2">
+							<a th:href="@{/providerdashboard/addservices}"
+								class="flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all text-gray-600 hover:bg-gray-50 hover:text-indigo-600 group">
+								<div class="icon-layers text-xl"></div>
+								<span class="font-medium">Manage Services</span>
+							</a>
+							<a th:href="@{/providerdashboard/checkstatus}"
+								class="flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all text-gray-600 hover:bg-gray-50 hover:text-indigo-600 group">
+								<div class="icon-calendar-check text-xl"></div>
+								<span class="font-medium">Booking Status</span>
+							</a>
+							<a th:href="@{/providerdashboard/bills}"
+								class="flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all bg-indigo-50 text-indigo-600 font-bold group shadow-sm ring-1 ring-indigo-100">
+								<div class="icon-receipt text-xl"></div>
+								<span class="font-medium">Bills & Invoices</span>
+							</a>
+						</nav>
+					</div>
+				</aside>
+
+				<!-- Main Content -->
+				<main class="md:col-span-3">
+					<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+						<div
+							class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8 border-b border-gray-100 pb-6">
+							<div>
+								<h2 class="text-2xl font-bold text-gray-900">Bills & Invoices</h2>
+								<p class="text-gray-500 text-sm mt-1">Track payments and download invoices</p>
+							</div>
+						</div>
+
+						<!-- Filters -->
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+							<div class="relative">
+								<label
+									class="block text-xs font-semibold uppercase text-gray-500 mb-2 tracking-wide">Time
+									Period</label>
+								<select id="period-filter"
+									class="w-full pl-4 pr-10 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 appearance-none bg-white cursor-pointer transition-shadow font-medium text-gray-700">
+									<option value="all">All Time</option>
+									<option value="monthly">Monthly</option>
+									<option value="yearly">Yearly</option>
+								</select>
+								<div
+									class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 pt-6 text-gray-500">
+									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M19 9l-7 7-7-7" />
+									</svg>
+								</div>
+							</div>
+							<div class="relative">
+								<label
+									class="block text-xs font-semibold uppercase text-gray-500 mb-2 tracking-wide">Service
+									Category</label>
+								<select id="service-filter"
+									class="w-full pl-4 pr-10 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 appearance-none bg-white cursor-pointer transition-shadow font-medium text-gray-700">
+									<option value="all">All Services</option>
+									<option value="wedding-hall">Wedding Hall</option>
+									<option value="catering">Catering</option>
+									<option value="decorator">Decorator</option>
+									<option value="photographer">Photographer</option>
+									<option value="dj">DJ</option>
+								</select>
+								<div
+									class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 pt-6 text-gray-500">
+									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+											d="M19 9l-7 7-7-7" />
+									</svg>
+								</div>
+							</div>
+						</div>
+
+						<!-- Bills Table -->
+						<div class="overflow-hidden rounded-xl border border-gray-100">
+							<table class="w-full">
+								<thead class="bg-gray-50">
+									<tr>
+										<th
+											class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+											Invoice #</th>
+										<th
+											class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+											Details</th>
+										<th
+											class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+											Date</th>
+										<th
+											class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+											Amount</th>
+										<th
+											class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+											Status</th>
+										<th
+											class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+											Actions</th>
+									</tr>
+								</thead>
+								<tbody id="bills-table-body" class="divide-y divide-gray-100 bg-white">
+									<!-- Filled via JS -->
+								</tbody>
+							</table>
+						</div>
+
+						<div id="empty-bills" class="hidden text-center py-16">
+							<div
+								class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+								<div class="icon-receipt text-3xl text-gray-300"></div>
+							</div>
+							<p class="text-gray-900 font-medium">No bills found</p>
+							<p class="text-sm text-gray-500">Adjust filters or wait for payments</p>
+						</div>
+					</div>
+				</main>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<footer class="bg-gray-900 text-white mt-auto">
+			<div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+					<div class="space-y-4">
+						<div class="flex items-center space-x-3">
+							<div
+								class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+								<a href="index.html" class="icon-calendar text-xl text-white"></a>
+							</div>
+							<a href="index.html" class="text-2xl font-bold tracking-tight">EventHub</a>
+						</div>
+						<p class="text-gray-400 text-sm leading-relaxed">
+							Your trusted partner for discovering and booking exceptional events, venues, and vendors. We
+							make event planning seamless.
+						</p>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Provider Tools</h4>
+						<ul class="space-y-3 text-sm text-gray-400">
+							<li><a href="#" class="hover:text-white transition-colors">Add Service</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Check Status</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Billing</a></li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Support</h4>
+						<ul class="space-y-3 text-sm text-gray-400">
+							<li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Connect</h4>
+						<div class="flex space-x-4">
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all duration-300">
+								<div class="icon-facebook text-lg"></div>
+							</a>
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all duration-300">
+								<div class="icon-twitter text-lg"></div>
+							</a>
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all duration-300">
+								<div class="icon-instagram text-lg"></div>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
+					<p>&copy; 2025 EventHub. All rights reserved.</p>
+				</div>
+			</div>
+		</footer>
+	</div>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			let allBills = [];
+
+			// Fetch bills
+			fetch('/providerdashboard/bills/data')
+				.then(res => res.json())
+				.then(data => {
+					allBills = data;
+					renderBills(allBills);
+				})
+				.catch(err => console.error(err));
+
+			// Filters
+			const periodFilter = document.getElementById('period-filter');
+			const serviceFilter = document.getElementById('service-filter');
+
+			[periodFilter, serviceFilter].forEach(f => {
+				f.addEventListener('change', filterBills);
+			});
+
+			function filterBills() {
+				let filtered = [...allBills];
+
+				// Service (Category)
+				const catVal = serviceFilter.value;
+				if (catVal !== 'all') {
+					filtered = filtered.filter(b => {
+						if (!b.category) return false;
+						// Normalize: Wedding Hall -> wedding-hall
+						const apiCat = b.category.trim().toLowerCase().replace(/\s+/g, '-');
+						return apiCat === catVal;
+					});
+				}
+
+				// Time Period
+				const pVal = periodFilter.value;
+				if (pVal !== 'all') {
+					const now = new Date();
+					const currentMonth = now.getMonth();
+					const currentYear = now.getFullYear();
+
+					filtered = filtered.filter(b => {
+						// Parse date safely
+						const dateStr = b.createdDate || b.eventDate;
+						if (!dateStr) return false;
+						const d = new Date(dateStr);
+						if (isNaN(d.getTime())) return false;
+
+						if (pVal === 'monthly') {
+							return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+						} else if (pVal === 'yearly') {
+							return d.getFullYear() === currentYear;
+						}
+						return true;
+					});
+				}
+
+				renderBills(filtered);
+			}
+
+			function renderBills(bills) {
+				const tbody = document.getElementById('bills-table-body');
+				const empty = document.getElementById('empty-bills');
+				tbody.innerHTML = '';
+
+				if (bills.length === 0) {
+					empty.classList.remove('hidden');
+					return;
+				}
+				empty.classList.add('hidden');
+
+				bills.forEach(b => {
+					const tr = document.createElement('tr');
+					tr.className = 'hover:bg-gray-50 transition-colors group';
+
+					// Styling status
+					let statusClass = 'bg-gray-100 text-gray-600 border border-gray-200';
+					const statusStr = (b.status || '').toLowerCase();
+					if (statusStr === 'paid') statusClass = 'bg-green-50 text-green-700 border border-green-100';
+					else if (statusStr === 'pending') statusClass = 'bg-yellow-50 text-yellow-700 border border-yellow-100';
+
+					tr.innerHTML = `
+						<td class="px-6 py-4 text-sm font-medium text-indigo-600 font-mono">#INV-${b.billId}</td>
+						<td class="px-6 py-4">
+							<div class="text-sm font-bold text-gray-900">${b.serviceName}</div>
+							<div class="text-xs text-gray-500">${b.category}</div>
+						</td>
+						<td class="px-6 py-4 text-sm text-gray-600 flex items-center gap-1">
+							<div class="icon-calendar text-xs text-gray-400"></div> ${b.eventDate}
+						</td>
+						<td class="px-6 py-4 text-sm font-bold text-gray-900">₹${b.amount}</td>
+						<td class="px-6 py-4 text-sm">
+							<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${statusClass}">${b.status}</span>
+						</td>
+						<td class="px-6 py-4 text-sm">
+							<button class="text-indigo-600 hover:text-indigo-800 font-medium transition-colors flex items-center gap-1 group-hover:underline">
+								<div class="icon-download text-sm"></div> Download
+							</button>
+						</td>
+					`;
+					tbody.appendChild(tr);
+				});
+			}
+		});
+	</script>
+	<script src="/script/app.js"></script>
+</body>
+
+</html>

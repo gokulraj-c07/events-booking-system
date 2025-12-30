@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>User Management - Admin</title>
+    <th:block th:replace="~{admin-layout :: head}"></th:block>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <aside th:replace="~{admin-layout :: sidebar}"></aside>
+
+        <div class="flex-1 flex flex-col min-w-0">
+            <header th:replace="~{admin-layout :: topbar}"></header>
+
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div class="mb-10 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">User Management</h1>
+                        <p class="text-gray-500 mt-1">Manage customer and administration access.</p>
+                    </div>
+                    <button onclick="document.getElementById('adminModal').classList.remove('hidden')"
+                        class="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
+                        <div class="icon-plus text-lg"></div>
+                        Add Admin
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden mb-10">
+                    <div class="p-6 border-b border-gray-50">
+                        <h2 class="text-lg font-bold text-gray-900">Registered Users</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        ID</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        User Profile</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Contact Info</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Role</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        View</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                <tr th:each="u : ${users}" class="hover:bg-gray-50/50 transition-colors group">
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-400" th:text="${u.userId}"></td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs">
+                                                <span th:text="${#strings.substring(u.name,0,1)}">U</span>
+                                            </div>
+                                            <span class="text-sm font-bold text-gray-900"
+                                                th:text="${u.name}">Name</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-gray-900 font-medium" th:text="${u.emailId}">Email
+                                        </div>
+                                        <div class="text-xs text-gray-400" th:text="${u.phoneNumber}">Phone</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                            th:text="${u.role}">User</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a th:href="@{'/admin/user/' + ${u.userId} + '/view'}"
+                                            class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+                                            Details <div class="icon-external-link text-xs"></div>
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-gray-400 hover:text-red-500 transition-colors">
+                                            <div class="icon-trash-2 text-lg"></div>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-50">
+                        <h2 class="text-lg font-bold text-gray-900">Admin Accounts</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        ID</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Name</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Email</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        Security</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                <tr th:each="a : ${admins}" class="hover:bg-gray-50/50 transition-colors">
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-400" th:text="${a.userId}"></td>
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-900" th:text="${a.name}">Name</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500" th:text="${a.emailId}">Email</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div
+                                            class="inline-flex items-center gap-1 text-[10px] font-bold text-green-500 uppercase tracking-widest">
+                                            <div class="icon-shield-check"></div> Verified
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal"
+        class="fixed inset-0 bg-gray-950/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden">
+            <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                <h5 class="text-xl font-bold text-gray-900">Create New Administrator</h5>
+                <button onclick="document.getElementById('adminModal').classList.add('hidden')"
+                    class="text-gray-400 hover:text-gray-900 transition-colors">
+                    <div class="icon-x text-2xl"></div>
+                </button>
+            </div>
+            <div class="p-8">
+                <form th:action="@{/admin/users/add-admin}" method="post" class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Full
+                            Name</label>
+                        <input name="name" type="text" placeholder="Admin Name"
+                            class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-100 transition-all font-bold placeholder:font-normal"
+                            required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Email
+                            ID</label>
+                        <input name="emailId" type="email" placeholder="admin@eventhub.com"
+                            class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-100 transition-all font-bold placeholder:font-normal lowercase"
+                            required>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Secure
+                            Password</label>
+                        <input name="password" type="password" placeholder="••••••••"
+                            class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-100 transition-all font-bold placeholder:font-normal"
+                            required>
+                    </div>
+                    <button type="submit"
+                        class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 transition-all hover:-translate-y-1 active:translate-y-0">
+                        Create Admin Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:insert="~{admin-layout :: scripts}"></th:block>
+</body>
+
+</html>

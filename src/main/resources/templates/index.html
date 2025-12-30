@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub - Discover & Book Amazing Events</title>
+    <meta name="description"
+        content="Find and book the perfect events for any occasion. Browse venues, vendors, and experiences tailored to your needs.">
+    <meta name="keywords" content="event booking, venue booking, event planning, party venues, corporate events">
+    <meta property="og:title" content="EventHub - Discover & Book Amazing Events">
+    <meta property="og:description" content="Find and book the perfect events for any occasion">
+    <meta name="twitter:title" content="EventHub - Discover & Book Amazing Events">
+    <meta name="twitter:description" content="Find and book the perfect events for any occasion">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://resource.trickle.so/vendor_lib/unpkg/lucide-static@0.516.0/font/lucide.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/styles/main.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased">
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="glass-header sticky top-0 z-50 transition-all duration-300" id="header">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary-color)] to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+                            <a th:href="@{/}" class="icon-calendar text-xl text-white"></a>
+                        </div>
+                        <a th:href="@{/}"
+                            class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">EventHub</a>
+                    </div>
+                    <!-- Desktop nav bar -->
+                    <nav class="hidden md:flex items-center space-x-8">
+                        <a th:href="@{/events}"
+                            class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">Events</a>
+                        <a th:href="@{/venues}"
+                            class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">Venues</a>
+                        <a th:href="@{/vendors}"
+                            class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">Vendors</a>
+                        <a th:href="@{/about}"
+                            class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">About</a>
+
+                        <!-- BEFORE LOGIN -->
+                        <a class="px-5 py-2 bg-[var(--primary-color)] text-white rounded-lg font-semibold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all hover:scale-105 active:scale-95 text-sm"
+                            th:if="${session.userName == null}" href="/login?role=USER">Sign In</a>
+
+                        <!-- AFTER LOGIN (Desktop) -->
+                        <div class="relative" th:if="${session.userName != null}">
+                            <button id="userMenuButtonDesktop"
+                                class="flex items-center space-x-2 text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors focus:outline-none group">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                    <span th:text="${#strings.substring(session.userName,0,1)}"
+                                        class="font-bold"></span>
+                                </div>
+                                <span th:text="${session.userName}"></span>
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            <div id="userDropdownDesktop"
+                                class="hidden absolute right-0 mt-4 w-60 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden ring-1 ring-black ring-opacity-5">
+                                <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                                    <p class="text-sm font-medium text-gray-900">Signed in as</p>
+                                    <p class="text-sm text-gray-500 truncate" th:text="${session.userName}">User</p>
+                                </div>
+                                <a th:href="@{/userdashboard}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">User
+                                    Dashboard</a>
+                                <a th:href="@{/providerdashboard}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Provider
+                                    Dashboard</a>
+                                <a th:href="@{/logout}"
+                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Logout</a>
+                            </div>
+                        </div>
+                    </nav>
+                    <button class="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors" id="mobile-menu-btn">
+                        <div class="icon-menu text-2xl text-gray-600"></div>
+                    </button>
+                </div>
+                <!-- Mobile nav bar -->
+                <div class="md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 hidden absolute left-0 right-0 shadow-lg"
+                    id="mobile-menu">
+                    <nav class="px-4 py-4 space-y-3">
+                        <a th:href="@{/events}"
+                            class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Events</a>
+                        <a th:href="@{/venues}"
+                            class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Venues</a>
+                        <a th:href="@{/vendors}"
+                            class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Vendors</a>
+                        <a th:href="@{/about}"
+                            class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">About</a>
+
+                        <!-- BEFORE LOGIN -->
+                        <a class="block text-center w-full px-5 py-2 bg-[var(--primary-color)] text-white rounded-lg font-semibold hover:bg-indigo-700 shadow-md"
+                            th:if="${session.userName == null}" href="/loginrole">Sign In</a>
+
+                        <!-- AFTER LOGIN (Mobile) -->
+                        <div class="border-t border-gray-100 pt-3" th:if="${session.userName != null}">
+                            <div class="flex items-center space-x-3 px-2 py-2">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                                    <span th:text="${#strings.substring(session.userName,0,1)}"
+                                        class="font-bold"></span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900" th:text="${session.userName}"></p>
+                                </div>
+                            </div>
+                            <a th:href="@{/userdashboard}"
+                                class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">User
+                                Dashboard</a>
+                            <a th:href="@{/providerdashboard}"
+                                class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Provider
+                                Dashboard</a>
+                            <a th:href="@{/logout}"
+                                class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md">Logout</a>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section
+            class="relative bg-gradient-to-br from-[var(--primary-color)] to-purple-700 text-white py-24 px-4 overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+                <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white blur-3xl"></div>
+                <div class="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-pink-400 blur-3xl"></div>
+            </div>
+
+            <div th:if="${success}"
+                class="alert alert-success text-center mt-3 w-75 mx-auto shadow-lg bg-white/90 backdrop-blur text-green-700 rounded-xl"
+                id="success-msg" th:text="${success}"></div>
+
+            <div class="max-w-7xl mx-auto text-center relative z-10">
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight">
+                    Your Event, Your Way
+                </h1>
+                <p class="text-xl md:text-2xl mb-10 text-indigo-100 max-w-2xl mx-auto">
+                    Find the best venues and vendors with trusted reviews for your perfect celebration.
+                </p>
+
+                <form class="max-w-5xl mx-auto bg-white p-2 rounded-2xl shadow-xl shadow-indigo-900/20"
+                    th:action="@{/search}" method="get">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                        <div class="relative group">
+                            <input type="hidden" name="role" th:value="${user}" />
+                            <input type="hidden" name="userId" th:value="${userId}" />
+                            <div
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-indigo-500 transition-colors">
+                                <div class="icon-users text-xl"></div>
+                            </div>
+                            <select id="vendor-select"
+                                class="w-full pl-12 pr-4 py-3.5 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 text-gray-700 font-medium appearance-none bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+                                name="serviceCategory" required>
+                                <option value="" disabled selected>Select Vendor</option>
+                                <option value="Wedding Hall">Wedding Hall</option>
+                                <option value="Catering">Catering</option>
+                                <option value="Decorator">Decorator</option>
+                                <option value="Photographer">Photographer</option>
+                                <option value="DJ">DJ</option>
+                            </select>
+                        </div>
+
+                        <div class="relative group">
+                            <div
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-indigo-500 transition-colors">
+                                <div class="icon-map-pin text-xl"></div>
+                            </div>
+                            <select id="location-select"
+                                class="w-full pl-12 pr-4 py-3.5 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 text-gray-700 font-medium appearance-none bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+                                name="location" required>
+                                <option value="" disabled selected>Select Location</option>
+                                <option value="Adyar">Adyar</option>
+                                <option value="Anna Nagar">Anna Nagar</option>
+                                <option value="T. Nagar">T. Nagar</option>
+                                <option value="Velachery">Velachery</option>
+                                <option value="Tambaram">Tambaram</option>
+                                <option value="Avadi">Avadi</option>
+                                <option value="Chrompet">Chrompet</option>
+                                <option value="Guindy">Guindy</option>
+                                <option value="Saidapet">Saidapet</option>
+                                <option value="Kodambakkam">Kodambakkam</option>
+                                <option value="Ashok Nagar">Ashok Nagar</option>
+                                <option value="Vadapalani">Vadapalani</option>
+                                <option value="Mylapore">Mylapore</option>
+                                <option value="Royapettah">Royapettah</option>
+                                <option value="Kilpauk">Kilpauk</option>
+                                <option value="Egmore">Egmore</option>
+                                <option value="Nungambakkam">Nungambakkam</option>
+                                <option value="Perungudi">Perungudi</option>
+                                <option value="Thiruvanmiyur">Thiruvanmiyur</option>
+                                <option value="Sholinganallur">Sholinganallur</option>
+                                <option value="Medavakkam">Medavakkam</option>
+                                <option value="Pallavaram">Pallavaram</option>
+                                <option value="Thoraipakkam">Thoraipakkam</option>
+                                <option value="Porur">Porur</option>
+                                <option value="Ambattur">Ambattur</option>
+                                <option value="Mogappair">Mogappair</option>
+                                <option value="Perambur">Perambur</option>
+                                <option value="Washermanpet">Washermanpet</option>
+                                <option value="Triplicane">Triplicane</option>
+                                <option value="Poonamallee">Poonamallee</option>
+                                <option value="Ennore">Ennore</option>
+                                <option value="Red Hills">Red Hills</option>
+                                <option value="Kottivakkam">Kottivakkam</option>
+                                <option value="Kotturpuram">Kotturpuram</option>
+                                <option value="Mandaveli">Mandaveli</option>
+                                <option value="Besant Nagar">Besant Nagar</option>
+                            </select>
+                        </div>
+
+                        <div class="relative group">
+                            <div
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-indigo-500 transition-colors">
+                                <div class="icon-calendar text-xl"></div>
+                            </div>
+                            <input type="date" id="event-date" name="eventDate"
+                                class="w-full pl-12 pr-4 py-3.5 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 text-gray-700 font-medium bg-gray-50 hover:bg-white transition-colors cursor-pointer"
+                                required />
+                        </div>
+
+                        <button type="submit"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95">
+                            Search Now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Popular Venue Searches -->
+        <section id="venues" class="py-20 px-4 bg-white">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-gray-900 tracking-tight">Popular Venue
+                        Searches</h2>
+                    <p class="text-gray-500 text-lg max-w-2xl mx-auto">
+                        Explore the most sought-after venues in your area curated for your special moments.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <a href="#"
+                        class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                            <div class="icon-building-2 text-3xl text-orange-500"></div>
+                        </div>
+                        <h4 class="font-bold text-gray-800">Banquet Halls</h4>
+                    </a>
+                    <a href="#"
+                        class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                            <div class="icon-home text-3xl text-indigo-500"></div>
+                        </div>
+                        <h4 class="font-bold text-gray-800">Party Halls</h4>
+                    </a>
+                    <a href="#"
+                        class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-pink-50 flex items-center justify-center group-hover:bg-pink-100 transition-colors">
+                            <div class="icon-palmtree text-3xl text-pink-500"></div>
+                        </div>
+                        <h4 class="font-bold text-gray-800">Garden Venues</h4>
+                    </a>
+                    <a href="#"
+                        class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                            <div class="icon-hotel text-3xl text-blue-500"></div>
+                        </div>
+                        <h4 class="font-bold text-gray-800">Hotel Venues</h4>
+                    </a>
+                    <a href="#"
+                        class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-teal-50 flex items-center justify-center group-hover:bg-teal-100 transition-colors">
+                            <div class="icon-mountain text-3xl text-teal-500"></div>
+                        </div>
+                        <h4 class="font-bold text-gray-800">Resort Venues</h4>
+                    </a>
+                    <a href="#"
+                        class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition-colors">
+                            <div class="icon-warehouse text-3xl text-purple-500"></div>
+                        </div>
+                        <h4 class="font-bold text-gray-800">Convention Centers</h4>
+                    </a>
+                    <a href="#"
+                        class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                            <div class="icon-theater text-3xl text-red-500"></div>
+                        </div>
+                        <h4 class="font-bold text-gray-800">Auditoriums</h4>
+                    </a>
+                    <a href="#"
+                        class="bg-white rounded-2xl border border-gray-100 p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                        <div
+                            class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-yellow-50 flex items-center justify-center group-hover:bg-yellow-100 transition-colors">
+                            <div class="icon-tent text-3xl text-yellow-500"></div>
+                        </div>
+                        <h4 class="font-bold text-gray-800">Outdoor Spaces</h4>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular Searches -->
+        <section id="vendors" class="py-20 px-4 bg-gray-50 border-t border-gray-200">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-gray-900 tracking-tight">Popular Service
+                        Searches</h2>
+                    <p class="text-gray-500 text-lg">
+                        Find top-rated vendors and services for your perfect event.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <a href="#"
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-4">
+                        <div
+                            class="w-14 h-14 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                            <div class="icon-camera text-2xl"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1">Photographers</h4>
+                            <p class="text-gray-500 text-sm">Capture every moment beautifully with professional
+                                photographers.</p>
+                        </div>
+                    </a>
+
+                    <a href="#"
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-4">
+                        <div
+                            class="w-14 h-14 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
+                            <div class="icon-utensils text-2xl"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1">Caterers</h4>
+                            <p class="text-gray-500 text-sm">Delicious culinary experiences for your guests to enjoy.
+                            </p>
+                        </div>
+                    </a>
+
+                    <a href="#"
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-4">
+                        <div
+                            class="w-14 h-14 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center flex-shrink-0">
+                            <div class="icon-sparkles text-2xl"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1">Decorators</h4>
+                            <p class="text-gray-500 text-sm">Transform your venue with stunning floral and themed decor.
+                            </p>
+                        </div>
+                    </a>
+
+                    <a href="#"
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-4">
+                        <div
+                            class="w-14 h-14 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0">
+                            <div class="icon-music text-2xl"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1">DJ Services</h4>
+                            <p class="text-gray-500 text-sm">Keep the party alive with energetic music and
+                                entertainment.</p>
+                        </div>
+                    </a>
+
+                    <a href="#"
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-4">
+                        <div
+                            class="w-14 h-14 rounded-xl bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+                            <div class="icon-cake text-2xl"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1">Bakers</h4>
+                            <p class="text-gray-500 text-sm">Custom cakes and sweets for weddings and birthdays.</p>
+                        </div>
+                    </a>
+
+                    <a href="#"
+                        class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-4">
+                        <div
+                            class="w-14 h-14 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center flex-shrink-0">
+                            <div class="icon-user-check text-2xl"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 text-lg mb-1">Event Planners</h4>
+                            <p class="text-gray-500 text-sm">Professional A-Z event coordination and management.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wedding Categories -->
+        <section id="events" class="py-20 px-4 bg-white">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-gray-900 tracking-tight">Wedding Categories
+                    </h2>
+                    <p class="text-gray-500 text-lg">
+                        Everything you need for your dream wedding in one place.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-64">
+                        <img src="https://images.unsplash.com/photo-1519167758481-83f29da8aace?w=800&q=80"
+                            alt="Wedding Venues"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div
+                            class="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 class="text-white text-2xl font-bold mb-1">Wedding Venues</h3>
+                            <p
+                                class="text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                Find the perfect backdrop for your big day</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-64">
+                        <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&q=80"
+                            alt="Bridal Makeup"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div
+                            class="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 class="text-white text-2xl font-bold mb-1">Bridal Makeup</h3>
+                            <p
+                                class="text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                Professional artists for your perfect look</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-64">
+                        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80"
+                            alt="Wedding Photography"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div
+                            class="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 class="text-white text-2xl font-bold mb-1">Photography</h3>
+                            <p
+                                class="text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                Capture memories that last a lifetime</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-64">
+                        <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&q=80"
+                            alt="Wedding Catering"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div
+                            class="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 class="text-white text-2xl font-bold mb-1">Catering</h3>
+                            <p
+                                class="text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                Exquisite menus for every palate</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-64">
+                        <img src="https://images.unsplash.com/photo-1522413452208-996ff3f3e740?w=800&q=80"
+                            alt="Wedding Decoration"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div
+                            class="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 class="text-white text-2xl font-bold mb-1">Decoration</h3>
+                            <p
+                                class="text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                Stunning visuals and floral designs</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="group relative rounded-2xl overflow-hidden shadow-lg cursor-pointer h-64">
+                        <img src="https://images.unsplash.com/photo-1529634597663-d2f0ea28524c?w=800&q=80"
+                            alt="Wedding Cards"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div
+                            class="absolute bottom-0 left-0 p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 class="text-white text-2xl font-bold mb-1">Invites</h3>
+                            <p
+                                class="text-white/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                                Beautiful stationery to start the journey</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white mt-auto">
+            <div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                                <a href="index.html" class="icon-calendar text-xl text-white"></a>
+                            </div>
+                            <a href="index.html" class="text-2xl font-bold tracking-tight">EventHub</a>
+                        </div>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Your trusted partner for discovering and booking exceptional events, venues, and vendors. We
+                            make event planning seamless.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-bold mb-6 text-indigo-400">Services</h4>
+                        <ul class="space-y-3 text-sm text-gray-400">
+                            <li><a href="#" class="hover:text-white transition-colors">Wedding Halls</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Catering</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Decorations</a></li>
+                            <li><a href="#" class="hover:text-white transition-colors">Photography</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-bold mb-6 text-indigo-400">Support</h4>
+                        <ul class="space-y-3 text-sm text-gray-400">
+                            <li><a href="#help" class="hover:text-white transition-colors">Help Center</a></li>
+                            <li><a href="#contact" class="hover:text-white transition-colors">Contact Us</a></li>
+                            <li><a href="#terms" class="hover:text-white transition-colors">Terms of Service</a></li>
+                            <li><a href="#privacy" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-bold mb-6 text-indigo-400">Connect</h4>
+                        <div class="flex space-x-4">
+                            <a href="#"
+                                class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all duration-300">
+                                <div class="icon-facebook text-lg"></div>
+                            </a>
+                            <a href="#"
+                                class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all duration-300">
+                                <div class="icon-twitter text-lg"></div>
+                            </a>
+                            <a href="#"
+                                class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all duration-300">
+                                <div class="icon-instagram text-lg"></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
+                    <p>&copy; 2025 EventHub. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="/script/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Services Management - Admin</title>
+    <th:block th:replace="~{admin-layout :: head}"></th:block>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <aside th:replace="~{admin-layout :: sidebar}"></aside>
+
+        <div class="flex-1 flex flex-col min-w-0">
+            <header th:replace="~{admin-layout :: topbar}"></header>
+
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div class="mb-10">
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Service Catalog</h1>
+                    <p class="text-gray-500 mt-1">Full list of approved services across all categories.</p>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-50 flex items-center justify-between">
+                        <h2 class="text-lg font-bold text-gray-900">All Approved Services</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-gray-400">Total:</span>
+                            <span class="px-3 py-1 bg-gray-50 rounded-lg text-sm font-bold text-gray-900"
+                                th:text="${services.size()}">0</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        ID</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Provider</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Service Name</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
+                                        Status</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        View</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                <tr th:each="s : ${services}" class="hover:bg-gray-50/50 transition-colors group">
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-400" th:text="${s.serviceId}"></td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2 text-sm text-gray-900 font-bold"
+                                            th:text="${s.provider.name}">Provider</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-700" th:text="${s.serviceName}">
+                                        Service Name</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div
+                                            class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-green-100">
+                                            <div class="icon-check-circle text-xs"></div>
+                                            <span th:text="${s.status}">Approved</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a th:href="@{'/admin/service/' + ${s.serviceId} + '/view'}"
+                                            class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+                                            Details <div class="icon-external-link text-xs"></div>
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-gray-400 hover:text-red-500 transition-colors">
+                                            <div class="icon-trash-2 text-lg"></div>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <th:block th:insert="~{admin-layout :: scripts}"></th:block>
+</body>
+
+</html>

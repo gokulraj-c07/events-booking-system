@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Select Your Venues - EventHub</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://resource.trickle.so/vendor_lib/unpkg/lucide-static@0.516.0/font/lucide.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/styles/main.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased">
+	<div id="app" class="min-h-screen flex flex-col">
+		<!-- Header -->
+		<header class="glass-header sticky top-0 z-50 transition-all duration-300" id="header">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex items-center justify-between h-16">
+					<div class="flex items-center space-x-3">
+						<div
+							class="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary-color)] to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+							<a th:href="@{/}" class="icon-calendar text-xl text-white"></a>
+						</div>
+						<a th:href="@{/}"
+							class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">EventHub</a>
+					</div>
+					<!-- Desktop nav bar -->
+					<nav class="hidden md:flex items-center space-x-8">
+						<a href="#events"
+							class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">Events</a>
+						<a href="#venues"
+							class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">Venues</a>
+						<a href="#vendors"
+							class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">Vendors</a>
+						<a href="#about"
+							class="text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors duration-200 text-sm tracking-wide">About</a>
+
+						<!-- AFTER LOGIN (Desktop) -->
+						<div class="relative" th:if="${session.userName != null}">
+							<button id="userMenuButtonDesktop"
+								class="flex items-center space-x-2 text-gray-600 hover:text-[var(--primary-color)] font-medium transition-colors focus:outline-none group">
+								<div
+									class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+									<span th:text="${#strings.substring(session.userName,0,1)}"
+										class="font-bold"></span>
+								</div>
+								<span th:text="${session.userName}"></span>
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M19 9l-7 7-7-7" />
+								</svg>
+							</button>
+							<div id="userDropdownDesktop"
+								class="hidden absolute right-0 mt-4 w-60 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden ring-1 ring-black ring-opacity-5">
+								<div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+									<p class="text-sm font-medium text-gray-900">Signed in as</p>
+									<p class="text-sm text-gray-500 truncate" th:text="${session.userName}">User</p>
+								</div>
+								<a th:href="@{/userdashboard}"
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">User
+									Dashboard</a>
+								<a th:href="@{/providerdashboard}"
+									class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">Provider
+									Dashboard</a>
+								<a th:href="@{/logout}"
+									class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">Logout</a>
+							</div>
+						</div>
+					</nav>
+					<button class="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors" id="mobile-menu-btn">
+						<div class="icon-menu text-2xl text-gray-600"></div>
+					</button>
+				</div>
+				<!-- Mobile nav bar -->
+				<div class="md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200 hidden absolute left-0 right-0 shadow-lg"
+					id="mobile-menu">
+					<nav class="px-4 py-4 space-y-3">
+						<a href="#events"
+							class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Events</a>
+						<a href="#venues"
+							class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Venues</a>
+						<a href="#vendors"
+							class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">Vendors</a>
+						<a href="#about"
+							class="block text-gray-600 hover:text-[var(--primary-color)] font-medium">About</a>
+						<div class="border-t border-gray-100 pt-3" th:if="${session.userName != null}">
+							<div class="flex items-center space-x-3 px-2 py-2">
+								<div
+									class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+									<span th:text="${#strings.substring(session.userName,0,1)}"
+										class="font-bold"></span>
+								</div>
+								<p class="font-medium text-gray-900" th:text="${session.userName}"></p>
+							</div>
+							<a th:href="@{/userdashboard}"
+								class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">User
+								Dashboard</a>
+							<a th:href="@{/providerdashboard}"
+								class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Provider
+								Dashboard</a>
+							<a th:href="@{/logout}"
+								class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md">Logout</a>
+						</div>
+					</nav>
+				</div>
+			</div>
+		</header>
+
+		<main class="flex-grow">
+			<!-- Search Results Header -->
+			<section class="bg-indigo-600 text-white py-12">
+				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+					<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+						<div>
+							<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+								Results for <span th:text="${serviceCategory}">Vendor</span>
+							</h1>
+							<div class="flex flex-wrap items-center gap-4 text-indigo-100">
+								<div class="flex items-center gap-1.5" th:if="${location != null}">
+									<div class="icon-map-pin text-sm"></div>
+									<span th:text="${location}">Location</span>
+								</div>
+								<div class="flex items-center gap-1.5" th:if="${eventDate != null}">
+									<div class="icon-calendar text-sm"></div>
+									<span th:text="${eventDate}">Date</span>
+								</div>
+							</div>
+						</div>
+						<a href="/"
+							class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-white font-semibold transition-all border border-white/20">
+							<div class="icon-search text-lg"></div>
+							Modify Search
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- Results Section -->
+			<section class="py-12 bg-gray-50">
+				<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+					<div th:if="${success}"
+						class="mb-8 p-4 rounded-xl bg-green-50 border border-green-100 text-green-700 flex items-center gap-3 shadow-sm animate-fade-in"
+						id="success-msg">
+						<div class="icon-check-circle"></div>
+						<span th:text="${success}"></span>
+					</div>
+
+					<div th:if="${!hasResults}"
+						class="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
+						<div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+							<div class="icon-search-x text-4xl text-gray-300"></div>
+						</div>
+						<h2 class="text-2xl font-bold text-gray-900 mb-2">No services found</h2>
+						<p class="text-gray-500 max-w-sm mx-auto">We couldn't find any services matching your filters.
+							Try changing your search parameters.</p>
+						<a href="/"
+							class="mt-8 inline-block px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5 transition-all">Go
+							back to search</a>
+					</div>
+
+					<div class="grid grid-cols-1 gap-6" th:if="${hasResults}">
+						<div th:each="pa : ${results}"
+							class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row gap-6">
+							<!-- IMAGE -->
+							<div
+								class="w-full md:w-64 h-48 rounded-xl overflow-hidden flex-shrink-0 shadow-inner bg-gray-100">
+								<img th:src="${pa.service.imageUrl != null ? '/uploads/' + pa.service.imageUrl : '/assets/placeholder.jpg'}"
+									alt="Venue"
+									class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
+							</div>
+
+							<!-- DETAILS -->
+							<div class="flex-grow">
+								<div class="flex justify-between items-start mb-2">
+									<h3 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors"
+										th:text="${pa.service.serviceName}">Service name</h3>
+									<div class="flex items-center gap-1 text-yellow-500">
+										<div class="icon-star-full text-sm"></div>
+										<span class="text-sm font-bold text-gray-900">4.8</span>
+										<span class="text-xs text-gray-400 font-medium">(120 reviews)</span>
+									</div>
+								</div>
+
+								<div class="text-gray-500 text-sm mb-4 line-clamp-2 prose"
+									th:utext="${pa.service.description}">Short description</div>
+
+								<div class="flex flex-wrap items-center gap-4 text-xs font-semibold">
+									<div
+										class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full">
+										<div class="icon-tag text-xs"></div>
+										<span th:text="${pa.service.serviceCategory}">Category</span>
+									</div>
+									<div
+										class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-full border border-gray-100">
+										<div class="icon-map-pin text-xs"></div>
+										<span th:text="${pa.service.location}">Location</span>
+									</div>
+									<div
+										class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-600 rounded-full">
+										<div class="icon-banknote text-xs"></div>
+										<span th:text="'₹' + ${pa.service.price}">Price</span>
+									</div>
+									<div th:if="${pa.service.advanceAmount != null}"
+										class="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-600 rounded-full">
+										<div class="icon-shield-check text-xs"></div>
+										<span th:text="'Advance: ₹' + ${pa.service.advanceAmount}"></span>
+									</div>
+								</div>
+							</div>
+
+							<!-- RIGHT SIDE (AVAILABILITY + BOOKING) -->
+							<div
+								class="flex flex-col justify-between items-end md:w-48 gap-4 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-6 text-right">
+								<!-- AVAILABLE -->
+								<div th:if="${pa.available}" class="w-full">
+									<div
+										class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold border border-green-100 mb-4">
+										<div class="icon-check-circle text-xs"></div>
+										Available
+									</div>
+									<form th:action="@{/booking/create}" method="post" class="w-full">
+										<input type="hidden" name="serviceId" th:value="${pa.service.serviceId}" />
+										<input type="hidden" name="bookingDate" th:value="${eventDate}" />
+										<button
+											class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all active:translate-y-0">
+											Book Now
+										</button>
+									</form>
+								</div>
+								<!-- NOT AVAILABLE -->
+								<div th:if="${!pa.available}" class="w-full">
+									<div
+										class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-50 text-red-600 rounded-full text-xs font-bold border border-red-100 mb-2">
+										<div class="icon-alert-circle text-xs"></div>
+										Unavailable
+									</div>
+									<p class="text-[10px] text-gray-400 font-medium mb-4"
+										th:text="${!pa.service.available ? 'Service temporarily unavailable' : 'Already booked for this date'}">
+										Reason</p>
+									<button disabled
+										class="w-full py-3 bg-gray-100 text-gray-400 font-bold rounded-xl cursor-not-allowed">
+										Not Available
+									</button>
+								</div>
+
+								<a th:href="@{'/service/view/' + ${pa.service.serviceId}}"
+									class="text-sm font-semibold text-gray-500 hover:text-indigo-600 flex items-center gap-1 transition-colors">
+									View full details <div class="icon-chevron-right text-xs"></div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<!-- Footer -->
+		<footer class="bg-gray-900 text-white mt-auto">
+			<div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+				<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+					<div class="space-y-4">
+						<div class="flex items-center space-x-3">
+							<div
+								class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+								<a th:href="@{/}" class="icon-calendar text-xl text-white"></a>
+							</div>
+							<a th:href="@{/}" class="text-2xl font-bold tracking-tight">EventHub</a>
+						</div>
+						<p class="text-gray-400 text-sm leading-relaxed">
+							Your trusted partner for discovering and booking exceptional events, venues, and vendors. We
+							make event planning seamless.
+						</p>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Services</h4>
+						<ul class="space-y-3 text-sm text-gray-400">
+							<li><a href="#" class="hover:text-white transition-colors">Wedding Halls</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Catering</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Decorations</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Photography</a></li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Support</h4>
+						<ul class="space-y-3 text-sm text-gray-400">
+							<li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+							<li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-lg font-bold mb-6 text-indigo-400">Connect</h4>
+						<div class="flex space-x-4">
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all duration-300">
+								<div class="icon-facebook text-lg"></div>
+							</a>
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-sky-500 hover:text-white transition-all duration-300">
+								<div class="icon-twitter text-lg"></div>
+							</a>
+							<a href="#"
+								class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all duration-300">
+								<div class="icon-instagram text-lg"></div>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
+					<p>&copy; 2025 EventHub. All rights reserved.</p>
+				</div>
+			</div>
+		</footer>
+	</div>
+	<script src="/script/app.js"></script>
+</body>
+
+</html>

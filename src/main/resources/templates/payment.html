@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Make Payment - EventHub</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://resource.trickle.so/vendor_lib/unpkg/lucide-static@0.516.0/font/lucide.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/styles/main.css" rel="stylesheet">
+	<style>
+		.pay-option.active {
+			border-color: var(--primary-color);
+			background-color: rgba(99, 102, 241, 0.05);
+			box-shadow: 0 0 0 2px var(--primary-color);
+		}
+	</style>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased">
+	<div id="app" class="min-h-screen flex flex-col">
+		<!-- Header -->
+		<header class="glass-header sticky top-0 z-50 transition-all duration-300" id="header">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex items-center justify-between h-16">
+					<div class="flex items-center space-x-3">
+						<div
+							class="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary-color)] to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+							<a th:href="@{/}" class="icon-calendar text-xl text-white"></a>
+						</div>
+						<a th:href="@{/}"
+							class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">EventHub</a>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<main class="flex-grow py-12">
+			<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+				<!-- Progress Header -->
+				<div class="mb-12">
+					<div class="flex items-center justify-center gap-4 mb-4">
+						<div class="flex flex-col items-center">
+							<div
+								class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold shadow-lg shadow-green-100 italic">
+								<div class="icon-check text-sm font-bold"></div>
+							</div>
+							<span class="text-xs font-bold text-green-600 mt-2">Review</span>
+						</div>
+						<div class="w-20 h-0.5 bg-green-200"></div>
+						<div class="flex flex-col items-center">
+							<div
+								class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold shadow-lg shadow-indigo-100">
+								2</div>
+							<span class="text-xs font-bold text-indigo-600 mt-2">Payment</span>
+						</div>
+						<div class="w-20 h-0.5 bg-gray-100"></div>
+						<div class="flex flex-col items-center">
+							<div
+								class="w-10 h-10 rounded-full bg-white text-gray-400 border-2 border-gray-100 flex items-center justify-center font-bold">
+								3</div>
+							<span class="text-xs font-bold text-gray-400 mt-2">Success</span>
+						</div>
+					</div>
+					<h1 class="text-3xl font-extrabold text-center text-gray-900 tracking-tight">Complete Your Payment
+					</h1>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+					<!-- Column 1: Payment Selection & Forms -->
+					<div class="space-y-8">
+						<div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+							<h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+								<div class="icon-credit-card text-indigo-500"></div>
+								Payment Method
+							</h2>
+							<div class="grid grid-cols-1 gap-4 mb-8">
+								<div class="pay-option flex items-center justify-between p-4 border-2 border-gray-100 rounded-2xl cursor-pointer hover:border-indigo-200 transition-all group"
+									id="cardOption" onclick="showPayment('card')">
+									<div class="flex items-center gap-4">
+										<div
+											class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
+											<div class="icon-credit-card text-gray-500 group-hover:text-indigo-600">
+											</div>
+										</div>
+										<span class="font-bold text-gray-700">Credit / Debit Card</span>
+									</div>
+									<div
+										class="w-5 h-5 rounded-full border-2 border-gray-200 flex items-center justify-center p-1 group-h-[.active]:border-indigo-600">
+										<div
+											class="hidden group-h-[.active]:block w-full h-full bg-indigo-600 rounded-full">
+										</div>
+									</div>
+								</div>
+								<div class="pay-option flex items-center justify-between p-4 border-2 border-gray-100 rounded-2xl cursor-pointer hover:border-indigo-200 transition-all group"
+									id="upiOption" onclick="showPayment('upi')">
+									<div class="flex items-center gap-4">
+										<div
+											class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
+											<div class="icon-smartphone text-gray-500 group-hover:text-indigo-600">
+											</div>
+										</div>
+										<span class="font-bold text-gray-700">UPI Payment</span>
+									</div>
+									<div
+										class="w-5 h-5 rounded-full border-2 border-gray-200 flex items-center justify-center">
+									</div>
+								</div>
+							</div>
+
+							<!-- CARD FORM -->
+							<form th:action="@{/payment/complete}" method="post" id="cardForm" class="space-y-4 hidden">
+								<input type="hidden" name="bookingId" th:value="${booking.bookingId}">
+								<input type="hidden" name="paymentMethod" value="CARD">
+								<div>
+									<label
+										class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Card
+										Number</label>
+									<input type="text" placeholder="0000 0000 0000 0000"
+										class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 font-medium tracking-widest"
+										required>
+								</div>
+								<div>
+									<label
+										class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Card
+										Holder Name</label>
+									<input type="text" placeholder="John Doe"
+										class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 font-bold uppercase placeholder:normal-case tracking-wide"
+										required>
+								</div>
+								<div class="grid grid-cols-2 gap-4">
+									<div>
+										<label
+											class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Expiry
+											Date</label>
+										<input type="text" placeholder="MM/YY"
+											class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 font-medium"
+											required>
+									</div>
+									<div>
+										<label
+											class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">CVV</label>
+										<input type="password" placeholder="***"
+											class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 font-medium"
+											required>
+									</div>
+								</div>
+								<button
+									class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 transition-all hover:-translate-y-1 active:translate-y-0 mt-4">
+									Pay ₹<span th:text="${total}"></span> Now
+								</button>
+							</form>
+
+							<!-- UPI FORM -->
+							<form th:action="@{/payment/complete}" method="post" id="upiForm" class="space-y-6 hidden">
+								<input type="hidden" name="bookingId" th:value="${booking.bookingId}">
+								<input type="hidden" name="paymentMethod" value="UPI">
+								<div
+									class="p-6 border-2 border-dashed border-gray-100 rounded-3xl flex flex-col items-center">
+									<div class="w-32 h-32 bg-gray-50 rounded-xl mb-4 flex items-center justify-center">
+										<div class="icon-qr-code text-5xl text-gray-200"></div>
+									</div>
+									<p class="text-xs text-gray-400 font-medium italic mb-6">Scan QR with any UPI app
+									</p>
+
+									<div class="w-full">
+										<label
+											class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Or
+											Enter UPI ID</label>
+										<input type="text" name="upiId" placeholder="username@upi"
+											class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 font-bold text-center lowercase tracking-wide"
+											required>
+									</div>
+								</div>
+								<button
+									class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 transition-all hover:-translate-y-1 active:translate-y-0">
+									Pay via UPI
+								</button>
+							</form>
+						</div>
+					</div>
+
+					<!-- Column 2: Order Preview -->
+					<aside>
+						<div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 space-y-6">
+							<h2 class="text-xl font-bold text-gray-900 mb-6">Order Preview</h2>
+
+							<div class="flex gap-4">
+								<div class="w-16 h-16 rounded-xl overflow-hidden shadow-inner flex-shrink-0">
+									<img th:src="@{'/uploads/' + ${service.imageUrl}}"
+										class="w-full h-full object-cover" />
+								</div>
+								<div>
+									<h3 class="font-bold text-gray-900 text-sm" th:text="${service.serviceName}"></h3>
+									<div
+										class="flex items-center gap-1 text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">
+										<div class="icon-calendar text-[10px]"></div> <span
+											th:text="${booking.bookingDate}"></span>
+									</div>
+								</div>
+							</div>
+
+							<div class="pt-4 border-t border-gray-50 space-y-3">
+								<div class="flex justify-between text-xs text-gray-500 font-medium">
+									<span>Subtotal</span>
+									<span class="text-gray-900" th:text="'₹' + ${amount}"></span>
+								</div>
+								<div class="flex justify-between text-xs text-gray-500 font-medium">
+									<span>Taxes & GST (18%)</span>
+									<span class="text-gray-900" th:text="'₹' + ${gst}"></span>
+								</div>
+								<div class="flex justify-between items-center bg-indigo-50/50 p-4 rounded-2xl mt-4">
+									<span class="text-sm font-bold text-gray-900 tracking-tight">Total Amount</span>
+									<span class="text-2xl font-extrabold text-indigo-600 tracking-tight"
+										th:text="'₹' + ${total}"></span>
+								</div>
+							</div>
+
+							<div class="p-4 bg-gray-50 rounded-2xl">
+								<div class="flex items-center gap-2 text-gray-400 mb-2">
+									<div class="icon-lock text-sm"></div>
+									<span
+										class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Security</span>
+								</div>
+								<p class="text-[10px] text-gray-400 leading-relaxed font-medium">
+									Your security is important to us. We never store your full card details. All
+									transactions are handled by certified payment processors.
+								</p>
+							</div>
+						</div>
+					</aside>
+				</div>
+			</div>
+		</main>
+
+		<!-- Footer -->
+		<footer class="bg-gray-900 text-white mt-auto">
+			<div class="max-w-7xl mx-auto px-4 py-8 text-center text-sm text-gray-500 italic">
+				Secure SSL Encrypted Payment
+			</div>
+		</footer>
+	</div>
+
+	<script>
+		function showPayment(type) {
+			const cardForm = document.getElementById('cardForm');
+			const upiForm = document.getElementById('upiForm');
+			const cardOption = document.getElementById('cardOption');
+			const upiOption = document.getElementById('upiOption');
+
+			if (type === 'card') {
+				cardForm.classList.remove('hidden');
+				upiForm.classList.add('hidden');
+				cardOption.classList.add('active');
+				upiOption.classList.remove('active');
+			} else {
+				cardForm.classList.add('hidden');
+				upiForm.classList.remove('hidden');
+				upiOption.classList.add('active');
+				cardOption.classList.remove('active');
+			}
+		}
+	</script>
+	<script src="/script/app.js"></script>
+</body>
+
+</html>

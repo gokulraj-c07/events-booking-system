@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>User Details - Admin</title>
+    <th:block th:replace="~{admin-layout :: head}"></th:block>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <aside th:replace="~{admin-layout :: sidebar}"></aside>
+
+        <div class="flex-1 flex flex-col min-w-0">
+            <header th:replace="~{admin-layout :: topbar}"></header>
+
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div class="mb-10 flex items-center justify-between">
+                    <div>
+                        <a href="/admin/users"
+                            class="text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-indigo-600 transition-colors flex items-center gap-2 mb-2">
+                            <div class="icon-arrow-left"></div> Back to Users
+                        </a>
+                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Full User Profile</h1>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Basic Info -->
+                    <div class="lg:col-span-1 space-y-8">
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 text-center">
+                            <div
+                                class="w-24 h-24 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl font-bold mx-auto mb-4 border-4 border-white shadow-xl">
+                                <span th:text="${#strings.substring(targetUser.name,0,1)}">U</span>
+                            </div>
+                            <h2 class="text-2xl font-black text-gray-900" th:text="${targetUser.name}">User Name</h2>
+                            <span
+                                class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-100 mt-2 inline-block"
+                                th:text="${targetUser.role}">USER</span>
+                        </div>
+
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+                            <h3
+                                class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-50 pb-4">
+                                Verification Status</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-500">Identity</span>
+                                    <span
+                                        class="text-xs font-bold text-green-500 uppercase tracking-wider flex items-center gap-1">
+                                        <div class="icon-check-circle"></div> Verified
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-500">Security</span>
+                                    <span
+                                        class="text-xs font-bold text-green-500 uppercase tracking-wider flex items-center gap-1">
+                                        <div class="icon-shield-check"></div> MFA Active
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Database Record -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div class="p-8 border-b border-gray-50 bg-gray-50/50">
+                                <h2 class="text-lg font-bold text-gray-900">Complete Database Record</h2>
+                            </div>
+                            <div class="p-8">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                                    <div class="space-y-1">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">System
+                                            Unique ID</label>
+                                        <p class="text-sm font-bold text-gray-900 font-mono"
+                                            th:text="${targetUser.userId}">ID</p>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Full
+                                            Name</label>
+                                        <p class="text-sm font-bold text-gray-900" th:text="${targetUser.name}">Name</p>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email
+                                            Address</label>
+                                        <p class="text-sm font-bold text-gray-900" th:text="${targetUser.emailId}">Email
+                                        </p>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Phone
+                                            Number</label>
+                                        <p class="text-sm font-bold text-gray-900" th:text="${targetUser.phoneNumber}">
+                                            Phone</p>
+                                    </div>
+                                    <div class="space-y-1 md:col-span-2">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">System
+                                            Role</label>
+                                        <p class="text-sm font-bold text-gray-900" th:text="${targetUser.role}">Role</p>
+                                    </div>
+                                    <div class="space-y-1 md:col-span-2">
+                                        <label
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Encrypted
+                                            Password String</label>
+                                        <p class="text-xs font-medium text-gray-400 truncate bg-gray-50 p-3 rounded-xl border border-gray-100"
+                                            th:text="${targetUser.password}">Password Hash</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <th:block th:insert="~{admin-layout :: scripts}"></th:block>
+</body>
+
+</html>

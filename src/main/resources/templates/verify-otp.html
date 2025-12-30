@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP - EventHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://resource.trickle.so/vendor_lib/unpkg/lucide-static@0.516.0/font/lucide.css" rel="stylesheet">
+  <link href="/styles/main.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-50 flex items-center justify-center min-h-screen py-10">
+  <div class="w-full max-w-md p-6">
+    <!-- Logo -->
+    <div class="flex flex-col items-center mb-8">
+      <div
+        class="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--primary-color)] to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200 mb-4">
+        <div class="icon-shield-check text-2xl text-white"></div>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900">Verify OTP</h1>
+      <p class="text-gray-500 mt-2">Enter the verification code sent to your email</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+      <div th:if="${error}"
+        class="mb-6 p-4 rounded-lg bg-red-50 text-red-600 border border-red-100 flex items-center gap-2">
+        <div class="icon-alert-circle text-lg"></div>
+        <span th:text="${error}">Error message</span>
+      </div>
+      <div th:if="${success}"
+        class="mb-6 p-4 rounded-lg bg-green-50 text-green-600 border border-green-100 flex items-center gap-2">
+        <div class="icon-check-circle text-lg"></div>
+        <span th:text="${success}">Success message</span>
+      </div>
+
+      <!--Verify OTP For Login-->
+      <form th:if="${mode == 'login'}" action="/login/verify-otp" method="post" class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+          <div class="relative">
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <div class="icon-mail text-lg"></div>
+            </div>
+            <input type="text" name="emailId" th:value="${emailId}" readonly
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 focus:outline-none cursor-not-allowed">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">One-Time Password</label>
+          <div class="relative">
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <div class="icon-key text-lg"></div>
+            </div>
+            <input type="text" name="otp" required
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 transition-all text-gray-900 placeholder-gray-400 tracking-widest"
+              placeholder="123456">
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-indigo-100 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-95">
+          Verify & Login
+        </button>
+      </form>
+
+      <!--Verify OTP For Signup-->
+      <form th:if="${mode == 'signup'}" action="/signup/verify-otp" method="post" class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+          <div class="relative">
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <div class="icon-mail text-lg"></div>
+            </div>
+            <input type="text" name="emailId" th:value="${emailId}" readonly
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 focus:outline-none cursor-not-allowed">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">One-Time Password</label>
+          <div class="relative">
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+              <div class="icon-key text-lg"></div>
+            </div>
+            <input type="text" name="otp" required
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 transition-all text-gray-900 placeholder-gray-400 tracking-widest"
+              placeholder="123456">
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg shadow-indigo-100 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-95">
+          Verify & Create Account
+        </button>
+      </form>
+
+      <div class="mt-8 text-center">
+        <p class="text-sm text-gray-500">
+          Didn't receive code?
+          <button
+            class="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline bg-transparent border-none cursor-pointer">Resend
+            OTP</button>
+        </p>
+      </div>
+    </div>
+
+    <p class="mt-8 text-center text-xs text-gray-400">
+      &copy; 2025 EventHub. All rights reserved.
+    </p>
+  </div>
+</body>
+
+</html>

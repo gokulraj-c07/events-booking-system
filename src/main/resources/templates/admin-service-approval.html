@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Service Approvals - Admin</title>
+    <th:block th:replace="~{admin-layout :: head}"></th:block>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-900 antialiased overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <aside th:replace="~{admin-layout :: sidebar}"></aside>
+
+        <div class="flex-1 flex flex-col min-w-0">
+            <header th:replace="~{admin-layout :: topbar}"></header>
+
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div class="mb-10">
+                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Approval Queue</h1>
+                    <p class="text-gray-500 mt-1">Review and moderate new service submissions from providers.</p>
+                </div>
+
+                <div th:if="${pending != null and !pending.empty}"
+                    class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-50">
+                        <h2 class="text-lg font-bold text-gray-900">Pending Review</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        ID</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Provider</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Service Name</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        Status</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        View</th>
+                                    <th
+                                        class="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">
+                                        Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                <tr th:each="s : ${pending}" class="hover:bg-gray-50/50 transition-colors group">
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-400" th:text="${s.serviceId}"></td>
+                                    <td class="px-6 py-4">
+                                        <span class="text-sm font-bold text-gray-900"
+                                            th:text="${s.provider.name}">Provider</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm font-medium text-gray-700" th:text="${s.serviceName}">
+                                            Service Name</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div
+                                            class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-amber-100">
+                                            <div class="icon-clock text-xs"></div>
+                                            <span th:text="${s.status}">Pending</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a th:href="@{'/admin/service/' + ${s.serviceId} + '/view'}"
+                                            class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+                                            Details <div class="icon-external-link text-xs"></div>
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div class="flex items-center justify-end gap-3">
+                                            <form th:action="@{'/admin/service/' + ${s.serviceId} + '/approve'}"
+                                                method="post">
+                                                <button
+                                                    class="px-4 py-2 bg-green-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-green-100 hover:bg-green-600 transition-all">
+                                                    Approve
+                                                </button>
+                                            </form>
+                                            <form th:action="@{'/admin/service/' + ${s.serviceId} + '/reject'}"
+                                                method="post">
+                                                <button
+                                                    class="px-4 py-2 bg-white border-2 border-red-100 text-red-500 text-xs font-bold rounded-xl hover:bg-red-50 transition-all">
+                                                    Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div th:if="${pending == null or pending.empty}"
+                    class="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                    <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <div class="icon-coffee text-3xl text-gray-300"></div>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900">All caught up!</h3>
+                    <p class="text-gray-400 text-sm">There are no pending service approvals at the moment.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <th:block th:insert="~{admin-layout :: scripts}"></th:block>
+</body>
+
+</html>
